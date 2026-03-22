@@ -31,7 +31,11 @@ func parseTraining(data string) (int, string, time.Duration, error) {
 
 	if err != nil {
 
-		return 0, "0", 0, err
+		return 0, "", 0, fmt.Errorf("ошибка конвертации шагов")
+	}
+
+	if steps <= 0 {
+		return 0, "", 0, fmt.Errorf("неверное количество шагов")
 	}
 
 	training := strings.TrimSpace(sliceStr[1])
@@ -40,7 +44,11 @@ func parseTraining(data string) (int, string, time.Duration, error) {
 
 	if err != nil {
 
-		return 0, "0", 0, err
+		return 0, "", 0, fmt.Errorf("ошибка парсинга продолжительности")
+	}
+
+	if duration <= 0 {
+		return 0, "", 0, fmt.Errorf("нулевая продолжительность")
 	}
 
 	return steps, training, duration, nil
@@ -62,7 +70,11 @@ func distance(steps int, height float64) float64 {
 // расчет средней скорости
 func meanSpeed(steps int, height float64, duration time.Duration) float64 {
 
-	if duration < 0 {
+	if duration <= 0 {
+		return 0
+	}
+
+	if steps <= 0 {
 		return 0
 	}
 
@@ -78,8 +90,7 @@ func TrainingInfo(data string, weight, height float64) (string, error) {
 	steps, training, duration, err := parseTraining(data)
 
 	if err != nil {
-		log.Println(err)
-		// TODO: реализовать функцию
+		return "", fmt.Errorf("ошибка получения данных")
 	}
 
 	var calories float64
@@ -115,13 +126,13 @@ func TrainingInfo(data string, weight, height float64) (string, error) {
 func RunningSpentCalories(steps int, weight, height float64, duration time.Duration) (float64, error) {
 
 	switch {
-	case steps < 0:
+	case steps <= 0:
 		return 0, fmt.Errorf("количество шагов неверно")
-	case weight < 0:
+	case weight <= 0:
 		return 0, fmt.Errorf("вес неверный")
-	case height < 0:
+	case height <= 0:
 		return 0, fmt.Errorf("рост неверный")
-	case duration < 0:
+	case duration <= 0:
 		return 0, fmt.Errorf("продолжительность неверная")
 	}
 
@@ -138,13 +149,13 @@ func RunningSpentCalories(steps int, weight, height float64, duration time.Durat
 func WalkingSpentCalories(steps int, weight, height float64, duration time.Duration) (float64, error) {
 
 	switch {
-	case steps < 0:
+	case steps <= 0:
 		return 0, fmt.Errorf("количество шагов неверно")
-	case weight < 0:
+	case weight <= 0:
 		return 0, fmt.Errorf("вес неверный")
-	case height < 0:
+	case height <= 0:
 		return 0, fmt.Errorf("рост неверный")
-	case duration < 0:
+	case duration <= 0:
 		return 0, fmt.Errorf("продолжительность неверная")
 	}
 
